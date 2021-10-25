@@ -23,15 +23,6 @@ const displayController = (function () {
   };
   const openModal = (winner) => {
     const modal = document.querySelector(".modal");
-    const close = document.querySelector(".close");
-    close.addEventListener('click', function() { // close if button is pressed
-      modal.style.display = 'none';
-    });
-    window.addEventListener('click', function(event) { // close modal if area around modal is clicked 
-      if (event.target == modal) {
-        modal.style.display = 'none';
-      };
-    });
     const result = document.querySelector('.result');
     if (winner === 'tie') {
       result.textContent = 'The game was a tie!'
