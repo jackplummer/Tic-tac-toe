@@ -12,15 +12,32 @@
   <div class="header">
     <h1>Tic-tac-toe</h1>
     <p>Would you like to play a game?</p>
-    
+    <div class="player-select">
+      <button class="player">Play against Player</button>
+      <button class="computer">Play against Computer</button>
+    </div>
   </div>
   <div class="main">
     <div class="game-board"></div>
   </div>
-  <div class="modal">
+  <div class="modal-result">
     <div class="modal-content">
       <div class="result"></div>
       <button class="new-game">New Game</button>
+    </div>
+  </div>
+  <div class="modal-playerselect">
+    <div class="modal-content">
+      <h2>Player Select</h2>
+      <label for="player-one">Player One Name:</label>
+      <input type="text" id="player-one" name="player-one"> <br><br>
+      <label for="player-two">Player Two Name:</label>
+      <input type="text" id="player-two" name="player-two"> <br><br>
+      <label for="X">Which counter will Player One use?</label>
+      <div class="button-group">
+        <button class="counter-select" id="counterX" name="X" value="X">X</button>
+        <button class="counter-select" id="counterO" name="O" value="O">O</button>
+      </div>
     </div>
   </div>
 </body>

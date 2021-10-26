@@ -21,13 +21,17 @@ const displayController = (function () {
       gridCells[i].textContent = gameBoard.board[i];
     };
   };
-  const openModal = (winner) => {
-    const modal = document.querySelector(".modal");
+  const openResultModal = (winner) => {
+    const modal = document.querySelector('.modal-result');
     const result = document.querySelector('.result');
     if (winner === 'tie') {
       result.textContent = 'The game was a tie!'
     } else {
-      result.textContent = `${winner} wins!`
+      if (playerOne.counter === winner) {
+        result.textContent = `${playerOne.name} wins!`
+      } else {
+        result.textContent = `${playerTwo.name} wins!`
+      }
     };
     const newGame = document.querySelector('.new-game');
     newGame.addEventListener('click', function() {
@@ -35,14 +39,67 @@ const displayController = (function () {
     })
     modal.style.display = 'block';
   };
+  const openPlayerModal = () => {
+    const modal = document.querySelector('.modal-playerselect');
+    modal.style.display = 'block';
+    const playerSelect = document.querySelector('.player-select');
+    playerSelect.remove();
+    gameFlow.playerSelect();
+  };
   
   return {
-    generateGridCells, updateBoard, openModal,
+    generateGridCells, updateBoard, openResultModal, openPlayerModal,
   }
 })();
 
 const gameFlow = (function() {
-  let counter = 'X';
+  const playerOrComputer = () => {
+    const playerSelect = document.querySelector('.player');
+    playerSelect.addEventListener('click', function() {
+      displayController.openPlayerModal()
+    })
+  };
+
+  const playerSelect = () => {
+    const counterX = document.querySelector('#counterX');
+    counterX.addEventListener('click', function() {
+      let playerOneName = document.querySelector('#player-one');
+      let playerTwoName = document.querySelector('#player-two');
+      playerOne.name = playerOneName.value;
+      playerOne.counter = 'X'
+      playerTwo.name = playerTwoName.value;
+      playerTwo.counter = 'O'
+      playerOneName.value = '', playerTwoName.value = '' // clear form
+      const modal = document.querySelector('.modal-playerselect');
+      modal.style.display = 'none';
+      const main = document.querySelector('.main');
+      main.style.visibility = 'visible';
+    });
+    const counterO = document.querySelector('#counterO');
+    counterO.addEventListener('click', function() {
+      let playerOneName = document.querySelector('#player-one');
+      let playerTwoName = document.querySelector('#player-two');
+      playerOne.name = playerOneName.value;
+      playerOne.counter = 'O'
+      playerTwo.name = playerTwoName.value;
+      playerTwo.counter = 'X'
+      playerOneName.value = '', playerTwoName.value = '' // clear form
+      const modal = document.querySelector('.modal-playerselect');
+      modal.style.display = 'none';
+      const main = document.querySelector('.main');
+      main.style.visibility = 'visible';
+    });
+  };
+
+  let counter = '';
+
+  const firstTurn = () => {
+    if (counter === '') { // first turn
+      counter = playerOne.counter;
+      return;
+    };
+  };
+
   const changeTurn = () => {
     if (counter === 'X') {
       counter = 'O';
@@ -59,6 +116,7 @@ const gameFlow = (function() {
           gameBoard.board[index] === 'O') {
             return;
           };
+        firstTurn(); // first turn only
         gameBoard.board[index] = counter;
         displayController.updateBoard();
         changeTurn();
@@ -83,24 +141,33 @@ const gameFlow = (function() {
     };
     for (const index in winConditions) {
       if (winConditions[index].every(elem => indexesX.includes(elem))) {
-        displayController.openModal('X');
+        displayController.openResultModal('X');
         return;
       } else if (winConditions[index].every(elem => indexesO.includes(elem))) {
-        displayController.openModal('O');
+        displayController.openResultModal('O');
         return;
       };
     };
     if (gameBoard.board.includes('') === false) { // check for draw
-      displayController.openModal('tie');
+      displayController.openResultModal('tie');
     }
   };
   return {
-    cellClick, checkWin,
+    cellClick, checkWin, playerOrComputer, playerSelect,
   }
 })();
 
+function createPlayer(name, counter) {
+  return {
+    name: name,
+    counter: counter
+  };
+};
 
+const playerOne = createPlayer('Player One', 'X');
+const playerTwo = createPlayer('Player Two', 'O');
 
-displayController.generateGridCells()
-displayController.updateBoard()
+displayController.generateGridCells();
+displayController.updateBoard();
 gameFlow.cellClick();
+gameFlow.playerOrComputer();
