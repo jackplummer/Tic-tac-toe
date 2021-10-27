@@ -1,3 +1,7 @@
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
 .header {
   display: flex;
   flex-direction: column;
@@ -6,10 +10,15 @@
   margin-bottom: 50px;
 }
 
+.player-select > button {
+  padding: 5px 10px;
+}
+
 .main {
   display: flex;
   justify-content: center;
   visibility: hidden;
+
 }
 
 .game-board {
@@ -57,17 +66,13 @@
   width: 50%;
 }
 
-.close {
-  color: #aaa;
-  font-size: 28px;
+.button-group > button {
+  padding: 5px 15px;
   font-weight: bold;
-  float: right;
+  font-size: 20px
 }
 
-
-.close:hover,
-.close:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
+.new-game {
+  padding: 5px 15px;
+  font-weight: bold;
 }
