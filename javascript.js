@@ -26,6 +26,8 @@ const displayController = (function () {
     const result = document.querySelector('.result');
     if (winner === 'tie') {
       result.textContent = 'The game was a tie!'
+    } else if (winner === 'Computer') {
+      result.textContent = `The Computer wins!`
     } else {
       if (playerOne.counter === winner) {
         result.textContent = `${playerOne.name} wins!`
@@ -53,11 +55,21 @@ const displayController = (function () {
 })();
 
 const gameFlow = (function() {
+  let gameType = '';
+
   const playerOrComputer = () => {
-    const playerSelect = document.querySelector('.player');
-    playerSelect.addEventListener('click', function() {
+    const selectPlayer = document.querySelector('.player');
+    selectPlayer.addEventListener('click', function() {
       displayController.openPlayerModal()
-    })
+    });
+    const selectComputer = document.querySelector('.computer');
+    selectComputer.addEventListener('click', function() {
+      const playerSelect = document.querySelector('.player-select');
+      playerSelect.remove();
+      const main = document.querySelector('.main');
+      main.style.visibility = 'visible';
+      gameType = 'Computer';
+    });
   };
 
   const playerSelect = () => {
@@ -107,6 +119,23 @@ const gameFlow = (function() {
       counter = 'X'
     };
   };
+
+  const randomCell = () => {
+    // find empty elements in array
+    let indexesBlank = [];
+    for (i = 0; i <= 8; i++) {
+      if (gameBoard.board[i] === '') {
+        indexesBlank.push(i);
+      };
+    };
+    // change random empty element with counter
+    let indexRandom = Math.floor(Math.random()*indexesBlank.length);
+    gameBoard.board[indexesBlank[indexRandom]] = counter;
+    displayController.updateBoard();
+    checkWin();
+    changeTurn();
+  };
+
   const cellClick = () => {
     const gridCells = document.querySelectorAll('.game-board > div');
     for (const cell of gridCells) {
@@ -119,8 +148,11 @@ const gameFlow = (function() {
         firstTurn(); // first turn only
         gameBoard.board[index] = counter;
         displayController.updateBoard();
-        changeTurn();
         checkWin();
+        changeTurn();
+        if (gameType === 'Computer') {
+          randomCell();
+        };
       });
     };
   };
@@ -144,8 +176,14 @@ const gameFlow = (function() {
         displayController.openResultModal('X');
         return;
       } else if (winConditions[index].every(elem => indexesO.includes(elem))) {
-        displayController.openResultModal('O');
-        return;
+        if (gameType === 'Computer') {
+          displayController.openResultModal('Computer');
+          console.log('Computer')
+          return;
+        } else {
+          displayController.openResultModal('O');
+          return;
+        }
       };
     };
     if (gameBoard.board.includes('') === false) { // check for draw
@@ -157,15 +195,17 @@ const gameFlow = (function() {
   }
 })();
 
-function createPlayer(name, counter) {
+function createPlayer(name, counter, type) {
   return {
     name: name,
-    counter: counter
+    counter: counter,
+    type: type,
   };
 };
 
-const playerOne = createPlayer('Player One', 'X');
-const playerTwo = createPlayer('Player Two', 'O');
+const playerOne = createPlayer('Player One', 'X', 'Player');
+const playerTwo = createPlayer('Player Two', 'O', 'Player');
+const computer = createPlayer('Computer', 'O', 'Computer');
 
 displayController.generateGridCells();
 displayController.updateBoard();
